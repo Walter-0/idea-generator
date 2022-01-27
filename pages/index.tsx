@@ -21,7 +21,6 @@ import Layout from "../components/Layout";
 import { useSession } from "next-auth/react";
 import { Idea, IdeaDto } from "../models/Idea";
 
-const baseURL = "http://localhost:3001";
 
 const Home: NextPage = () => {
   const { data } = useSession();
@@ -37,7 +36,7 @@ const Home: NextPage = () => {
   const getIdeas = async (): Promise<void> => {
     try {
       const response: AxiosResponse<Idea[]> = await axios.get<Idea[]>(
-        `${baseURL}/ideas`
+        "/api/ideas"
       );
       setIdeas(response.data);
     } catch (error) {
@@ -48,7 +47,7 @@ const Home: NextPage = () => {
   const generateIdea = async (): Promise<void> => {
     try {
       const response: AxiosResponse<Idea> = await axios.get<Idea>(
-        `${baseURL}/ideas/new`
+        "/api/ideas/new"
       );
       setNewIdea(response.data);
     } catch (error) {
@@ -60,7 +59,7 @@ const Home: NextPage = () => {
     if (newIdea) {
       try {
         await axios.post<IdeaDto>(
-          `${baseURL}/ideas`,
+          "/api/ideas",
           {
             appName: newIdea.appName,
             noun: pluralize(newIdea.noun),

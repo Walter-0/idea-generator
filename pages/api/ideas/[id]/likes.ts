@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Idea } from "../../../../models/Idea";
+import { IdeaModel } from "../../../../models/Idea";
 
 const userId = "61f2c9a5185f662249248c06";
 
@@ -13,7 +13,7 @@ export default async function handler(
     /** Like Idea */
     case "PATCH":
       try {
-        const likedIdea = await Idea.findByIdAndUpdate(
+        const likedIdea = await IdeaModel.findByIdAndUpdate(
           query.id,
           { $addToSet: { likes: userId } },
           { new: true }
@@ -28,7 +28,7 @@ export default async function handler(
     /** Unlike Idea */
     case "DELETE":
       try {
-        const unlikedIdea = await Idea.findByIdAndUpdate(
+        const unlikedIdea = await IdeaModel.findByIdAndUpdate(
           query.id,
           { $pull: { likes: userId } },
           { new: true }

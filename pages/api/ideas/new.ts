@@ -31,10 +31,7 @@ export default async function handler(
           noun: getRandomNoun(),
         };
 
-        res.status(200).json({
-          success: true,
-          data: generatedIdea,
-        });
+        res.status(200).json(generatedIdea);
       } catch (error) {
         res.status(400).json({ success: false });
       }
