@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
@@ -21,15 +22,8 @@ import Layout from "../components/Layout";
 import { useSession } from "next-auth/react";
 import { Idea, IdeaDto } from "../models/Idea";
 
-
 const Home: NextPage = () => {
-  const { data } = useSession();
-  let accessToken: string;
-
-  if (data) {
-    accessToken = data.accessToken as string;
-    console.log(data);
-  }
+  const { data: session } = useSession();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [newIdea, setNewIdea] = useState<Idea>();
 
@@ -56,18 +50,12 @@ const Home: NextPage = () => {
   };
 
   const saveIdea = async (): Promise<void> => {
-    if (newIdea) {
+    if (session && newIdea) {
       try {
-        await axios.post<IdeaDto>(
-          "/api/ideas",
-          {
-            appName: newIdea.appName,
-            noun: pluralize(newIdea.noun),
-          },
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
+        await axios.post<IdeaDto>("/api/ideas", {
+          appName: newIdea.appName,
+          noun: pluralize(newIdea.noun),
+        });
         void getIdeas();
       } catch (error) {
         throw error;
@@ -121,16 +109,24 @@ const Home: NextPage = () => {
           Generate Idea
         </Button>
 
-        <Button
-          variant="contained"
-          color="success"
-          size="large"
-          disabled={!newIdea}
-          endIcon={<SendIcon />}
-          onClick={saveIdea}
+        <Tooltip
+          title="Log in to save ideas"
+          placement="top"
+          disableHoverListener={!!(session && newIdea)}
         >
-          Save Idea
-        </Button>
+          <span>
+            <Button
+              variant="contained"
+              color="success"
+              size="large"
+              disabled={!(session && newIdea)}
+              endIcon={<SendIcon />}
+              onClick={saveIdea}
+            >
+              Save Idea
+            </Button>
+          </span>
+        </Tooltip>
 
         {newIdea && (
           <Typography variant="h3">
