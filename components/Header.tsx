@@ -10,7 +10,7 @@ const Header = () => {
         <Button onClick={() => signIn()}>Login</Button>
       ) : (
         <>
-          <Typography>Welcome {session.user?.name}</Typography>
+          <Typography>Signed in as {session.user?.email}</Typography>
           <Button onClick={() => signOut()}>Logout</Button>
         </>
       )}

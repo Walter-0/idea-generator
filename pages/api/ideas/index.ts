@@ -1,12 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import { getToken } from "next-auth/jwt";
-import { connectToDatabase } from "../../../utils/mongodb";
 import { IdeaModel } from "../../../models/Idea";
-
-connectToDatabase();
-
-const secret = process.env.JWT_SECRET as string;
 
 export default async function handler(
   req: NextApiRequest,

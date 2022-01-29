@@ -8,6 +8,9 @@ export interface IdeaDto {
 
 export interface Idea extends IdeaDto {
   likes: Types.Array<string>;
+  likesLength?: number;
+  _id?: string;
+  createdAt?: string;
 }
 
 const IdeaSchema = new Schema<Idea>(
@@ -21,6 +24,7 @@ const IdeaSchema = new Schema<Idea>(
       required: true,
     },
     likes: [String],
+    likesLength: Number,
   },
   { timestamps: true }
 );

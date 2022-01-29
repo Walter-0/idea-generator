@@ -1,6 +1,7 @@
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
+import type { GetServerSideProps, NextPage } from "next";
+import { useState } from "react";
 import Head from "next/head";
+import { useSession, getSession } from "next-auth/react";
 import axios, { AxiosResponse } from "axios";
 import {
   Box,
@@ -19,13 +20,18 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import pluralize from "pluralize";
 import Layout from "../components/Layout";
-import { useSession } from "next-auth/react";
-import { Idea, IdeaDto } from "../models/Idea";
+import { Idea, IdeaDto, IdeaModel } from "../models/Idea";
+import dbConnect from "../utils/mongoose";
+import { Session } from "next-auth";
 
-const Home: NextPage = () => {
+interface HomeProps {
+  ideas: Idea[];
+}
+
+const Home: NextPage<HomeProps> = (props) => {
   const { data: session } = useSession();
-  const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [newIdea, setNewIdea] = useState<Idea>();
+  const [ideas, setIdeas] = useState<Idea[]>(props.ideas);
+  const [generatedIdea, setGeneratedIdea] = useState<Idea>();
 
   const getIdeas = async (): Promise<void> => {
     try {
@@ -43,18 +49,18 @@ const Home: NextPage = () => {
       const response: AxiosResponse<Idea> = await axios.get<Idea>(
         "/api/ideas/new"
       );
-      setNewIdea(response.data);
+      setGeneratedIdea(response.data);
     } catch (error) {
       throw error;
     }
   };
 
   const saveIdea = async (): Promise<void> => {
-    if (session && newIdea) {
+    if (session && generatedIdea) {
       try {
         await axios.post<IdeaDto>("/api/ideas", {
-          appName: newIdea.appName,
-          noun: pluralize(newIdea.noun),
+          appName: generatedIdea.appName,
+          noun: pluralize(generatedIdea.noun),
         });
         void getIdeas();
       } catch (error) {
@@ -87,10 +93,6 @@ const Home: NextPage = () => {
     return formattedDate.toLocaleString();
   };
 
-  useEffect(() => {
-    void getIdeas();
-  }, []);
-
   return (
     <Layout>
       <Head>
@@ -112,14 +114,14 @@ const Home: NextPage = () => {
         <Tooltip
           title="Log in to save ideas"
           placement="top"
-          disableHoverListener={!!(session && newIdea)}
+          disableHoverListener={!!session}
         >
           <span>
             <Button
               variant="contained"
               color="success"
               size="large"
-              disabled={!(session && newIdea)}
+              disabled={!(session && generatedIdea)}
               endIcon={<SendIcon />}
               onClick={saveIdea}
             >
@@ -128,29 +130,50 @@ const Home: NextPage = () => {
           </span>
         </Tooltip>
 
-        {newIdea && (
+        {generatedIdea && (
           <Typography variant="h3">
-            {formatName(newIdea.appName, newIdea.noun)}
+            {formatName(generatedIdea.appName, generatedIdea.noun)}
           </Typography>
         )}
 
         <Box>
           <List>
-            {!ideas.length ? (
+            {!ideas?.length ? (
               <CircularProgress />
             ) : (
               ideas.map((idea) => (
                 <ListItem
                   key={idea._id}
                   secondaryAction={
-                    <IconButton edge="end" onClick={() => likeIdea(idea)}>
-                      <FavoriteBorderIcon htmlColor="red" fontSize="large" />
-                    </IconButton>
+                    <>
+                      <Typography variant="button">
+                        {idea.likesLength || 0}
+                      </Typography>
+
+                      <Tooltip
+                        title="Log in to like ideas"
+                        placement="top"
+                        disableHoverListener={!!session}
+                      >
+                        <span>
+                          <IconButton
+                            edge="end"
+                            onClick={() => likeIdea(idea)}
+                            disabled={!session}
+                          >
+                            <FavoriteBorderIcon
+                              htmlColor="red"
+                              fontSize="large"
+                            />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    </>
                   }
                 >
                   <ListItemText
                     primary={formatName(idea.appName, idea.noun)}
-                    secondary={formatDate(idea.createdAt)}
+                    secondary={formatDate(idea.createdAt!)}
                   />
                 </ListItem>
               ))
@@ -160,6 +183,20 @@ const Home: NextPage = () => {
       </Container>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<{
+  session: Session | null;
+}> = async (context) => {
+  await dbConnect();
+  const ideas = await IdeaModel.find().sort({ likesLength: -1 });
+
+  return {
+    props: {
+      session: await getSession(context),
+      ideas: JSON.parse(JSON.stringify(ideas)),
+    },
+  };
 };
 
 export default Home;
