@@ -1,8 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as fs from "fs";
+import path from "path";
 
 const getRandomAppName = (): string => {
-  const data = fs.readFileSync("./public/app_names.txt", "utf8");
+  const data = fs.readFileSync(
+    `${path.join(process.cwd())}/public/app_names.txt`,
+    "utf8"
+  );
   const appNames = data.split(/\r?\n/);
   const randomInteger = Math.floor(Math.random() * appNames.length);
 
@@ -10,7 +14,10 @@ const getRandomAppName = (): string => {
 };
 
 const getRandomNoun = (): string => {
-  const data = fs.readFileSync("./public/nouns.txt", "utf8");
+  const data = fs.readFileSync(
+    `${path.join(process.cwd())}/public/nouns.txt`,
+    "utf8"
+  );
   const appNames = data.split(/\r?\n/);
   const randomInteger = Math.floor(Math.random() * appNames.length);
 
