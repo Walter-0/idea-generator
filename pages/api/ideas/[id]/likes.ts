@@ -31,6 +31,7 @@ export default async function handler(
           );
           res.status(200).json({ success: true, data: likedIdea });
         } catch (error) {
+          console.error(error);
           res.status(400).json({ success: false });
         }
       } else {
@@ -56,6 +57,7 @@ export default async function handler(
 
           res.status(200).json({ success: true, data: unlikedIdea });
         } catch (error) {
+          console.error(error);
           res.status(400).json({ success: false });
         }
       } else {
