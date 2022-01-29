@@ -2,6 +2,8 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useState } from "react";
 import Head from "next/head";
 import { useSession, getSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { createHmac } from "crypto";
 import axios, { AxiosResponse } from "axios";
 import {
   Box,
@@ -22,10 +24,10 @@ import pluralize from "pluralize";
 import Layout from "../components/Layout";
 import { Idea, IdeaDto, IdeaModel } from "../models/Idea";
 import dbConnect from "../utils/mongoose";
-import { Session } from "next-auth";
 
 interface HomeProps {
   ideas: Idea[];
+  userId: string;
 }
 
 const Home: NextPage<HomeProps> = (props) => {
@@ -69,19 +71,17 @@ const Home: NextPage<HomeProps> = (props) => {
     }
   };
 
-  const likeIdea = async (idea: Idea): Promise<void> => {
-    console.log("liked");
-
-    //   try {
-    //     if (true) {
-    //       await axios.delete(`${baseURL}/ideas/${idea._id}/likes/`);
-    //     } else {
-    //       await axios.patch(`${baseURL}/ideas/${idea._id}/likes/`);
-    //     }
-    //     void getIdeas();
-    //   } catch (error) {
-    //     throw error;
-    //   }
+  const toggleLikeIdea = async (idea: Idea): Promise<void> => {
+    try {
+      if (session && idea.likes.includes(props.userId)) {
+        await axios.delete(`/api/ideas/${idea._id}/likes/`);
+      } else {
+        await axios.patch(`/api/ideas/${idea._id}/likes/`);
+      }
+      void getIdeas();
+    } catch (error) {
+      throw error;
+    }
   };
 
   const formatName = (appName: string, noun: string): string => {
@@ -158,13 +158,17 @@ const Home: NextPage<HomeProps> = (props) => {
                         <span>
                           <IconButton
                             edge="end"
-                            onClick={() => likeIdea(idea)}
+                            onClick={() => toggleLikeIdea(idea)}
                             disabled={!session}
                           >
-                            <FavoriteBorderIcon
-                              htmlColor="red"
-                              fontSize="large"
-                            />
+                            {idea.likes.includes(props.userId) ? (
+                              <FavoriteIcon htmlColor="red" fontSize="large" />
+                            ) : (
+                              <FavoriteBorderIcon
+                                htmlColor="red"
+                                fontSize="large"
+                              />
+                            )}
                           </IconButton>
                         </span>
                       </Tooltip>
@@ -189,11 +193,21 @@ export const getServerSideProps: GetServerSideProps<{
   session: Session | null;
 }> = async (context) => {
   await dbConnect();
-  const ideas = await IdeaModel.find().sort({ likesLength: -1 });
+  const session = await getSession(context);
+  const secret = process.env.JWT_SECRET as string;
+  let hash = "";
+
+  if (session) {
+    const email = session?.user!.email!;
+    hash = createHmac("sha256", secret).update(email).digest("hex");
+  }
+
+  const ideas: Idea[] = await IdeaModel.find().sort({ likesLength: -1 });
 
   return {
     props: {
-      session: await getSession(context),
+      session,
+      userId: hash || "",
       ideas: JSON.parse(JSON.stringify(ideas)),
     },
   };

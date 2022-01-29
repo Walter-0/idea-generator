@@ -4,6 +4,7 @@ import { MongoClient } from "mongodb";
 import EmailProvider from "next-auth/providers/email";
 
 const uri = process.env.MONGODB_URI as string;
+const secret = process.env.JWT_SECRET as string;
 const client = new MongoClient(uri);
 const clientPromise = client.connect();
 clientPromise.then(() => console.log("Connected to MongoDB"));
@@ -23,5 +24,5 @@ export default NextAuth({
       from: process.env.EMAIL_FROM,
     }),
   ],
-  secret: "secret",
+  secret: secret,
 });

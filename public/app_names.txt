@@ -1,0 +1,73 @@
+Airbnb
+Amazon
+Anchor
+Asana
+Bandcamp
+Basecamp
+BlackPlayer
+Blinkist
+Blue Apron
+Books
+Bumble
+Calm
+Citymapper
+Clue
+Cookpad
+Craigslist
+Doodle
+DoorDash
+Duolingo
+ESPN
+Eve
+Eventbrite
+Evernote
+FaceApp
+Facebook
+Feedly
+Fitbit
+Flickr
+Flipboard
+Groupon
+Headspace
+Home Workout
+IFTTT
+Instagram
+Kahoot!
+Khan Academy
+LinkedIn
+Meetup
+Messenger
+Mint
+MyFitnessPal
+Netflix
+Notion
+PicsArt Photo Studio
+Pinterest
+Pocket
+Pocket Casts
+Reddit
+Seamless
+Slack
+Snapchat
+Snapseed
+Songkick
+Soundcloud
+Spotify
+Stitcher
+Strava
+Telegram
+TikTok
+Tinder
+Todoist
+Trello
+Twitch
+Twitter
+Uber
+Uber Eats
+Untappd
+Venmo
+Weather
+Yelp
+YouTube
+Zocdoc
+Zoom

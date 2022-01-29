@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import * as fs from "fs";
 
 const getRandomAppName = (): string => {
-  // TODO: these text files really shouldn't be public
   const data = fs.readFileSync("public/app_names.txt", "utf8");
   const appNames = data.split(/\r?\n/);
   const randomInteger = Math.floor(Math.random() * appNames.length);

@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import { createHmac } from "crypto";
+
 import { IdeaModel } from "../../../../models/Idea";
 
-const userId = "61f2c9a5185f662249248c06";
+const secret = process.env.JWT_SECRET as string;
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,16 +17,18 @@ export default async function handler(
     /** Like Idea */
     case "PATCH":
       if (session) {
+        const email = session.user!.email!;
+        const hash = createHmac("sha256", secret).update(email).digest("hex");
+
         try {
           const likedIdea = await IdeaModel.findByIdAndUpdate(
             query.id,
             {
-              $addToSet: { likes: userId },
+              $addToSet: { likes: hash },
               $inc: { likesLength: 1 },
             },
             { new: true }
           );
-
           res.status(200).json({ success: true, data: likedIdea });
         } catch (error) {
           res.status(400).json({ success: false });
@@ -38,10 +42,13 @@ export default async function handler(
     case "DELETE":
       if (session) {
         try {
+          const email = session.user!.email!;
+          const hash = createHmac("sha256", secret).update(email).digest("hex");
+
           const unlikedIdea = await IdeaModel.findByIdAndUpdate(
             query.id,
             {
-              $pull: { likes: userId },
+              $pull: { likes: hash },
               $inc: { likesLength: -1 },
             },
             { new: true }

@@ -12,8 +12,7 @@ export default async function handler(
     /** Get all Ideas */
     case "GET":
       try {
-        // TODO: Sort by number of likes
-        const ideas = await IdeaModel.find({});
+        const ideas = await IdeaModel.find().sort({ likesLength: -1 });
 
         res.status(200).json(ideas);
       } catch (error) {
