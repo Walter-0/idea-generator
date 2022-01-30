@@ -25,10 +25,9 @@ export default async function handler(
     case "POST":
       if (session) {
       try {
-        // const newIdea = await IdeaModel.create(req.body);
+        const newIdea = await IdeaModel.create(req.body);
 
-        // return res.status(201).json({ success: true, data: newIdea });
-        return res.status(201).json({ success: true });
+        return res.status(201).json(newIdea);
       } catch (error) {
         console.error(error);
         return res.status(400).json({ success: false });
