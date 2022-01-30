@@ -209,7 +209,10 @@ export const getServerSideProps: GetServerSideProps<{
     hash = createHmac("sha256", secret).update(email).digest("hex");
   }
 
-  const ideas: Idea[] = await IdeaModel.find().sort({ likesLength: -1 });
+  const ideas: Idea[] = await IdeaModel.find().sort({
+    likesLength: -1,
+    createdAt: -1,
+  });
 
   return {
     props: {

@@ -13,7 +13,10 @@ export default async function handler(
     /** Get all Ideas */
     case "GET":
       try {
-        const ideas = await IdeaModel.find().sort({ likesLength: -1 });
+        const ideas = await IdeaModel.find().sort({
+          likesLength: -1,
+          createdAt: -1,
+        });
 
         return res.status(200).json(ideas);
       } catch (error) {
