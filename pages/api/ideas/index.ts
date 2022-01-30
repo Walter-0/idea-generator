@@ -24,17 +24,18 @@ export default async function handler(
     /** Save Idea to database */
     case "POST":
       if (session) {
-        try {
-          const newIdea = await IdeaModel.create(req.body);
+      try {
+        // const newIdea = await IdeaModel.create(req.body);
 
-          return res.status(201).json({ success: true, data: newIdea });
-        } catch (error) {
-          console.error(error);
-          return res.status(400).json({ success: false });
-        }
-      } else {
-        return res.status(401).end("You must be logged in to do that");
+        // return res.status(201).json({ success: true, data: newIdea });
+        return res.status(201).json({ success: true });
+      } catch (error) {
+        console.error(error);
+        return res.status(400).json({ success: false });
       }
+    } else {
+      return res.status(401).end("You must be logged in to do that");
+    }
 
     default:
       res.setHeader("Allow", ["GET", "POST"]);
