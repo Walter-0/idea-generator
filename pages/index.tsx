@@ -36,6 +36,7 @@ const Home: NextPage<HomeProps> = (props) => {
   const [generatedIdea, setGeneratedIdea] = useState<Idea>();
 
   const getIdeas = async (): Promise<void> => {
+    const startTime = performance.now();
     try {
       const response: AxiosResponse<Idea[]> = await axios.get<Idea[]>(
         "/api/ideas"
@@ -44,9 +45,12 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
+    const endTime = performance.now();
+    console.log(`getIdeas() took ${endTime - startTime} ms`);
   };
 
   const generateIdea = async (): Promise<void> => {
+    const startTime = performance.now();
     try {
       const response: AxiosResponse<Idea> = await axios.get<Idea>(
         "/api/ideas/new"
@@ -55,9 +59,12 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
+    const endTime = performance.now();
+    console.log(`generateIdea() took ${endTime - startTime} ms`);
   };
 
   const saveIdea = async (): Promise<void> => {
+    const startTime = performance.now();
     if (session && generatedIdea) {
       try {
         await axios.post<IdeaDto>("/api/ideas", {
@@ -69,9 +76,12 @@ const Home: NextPage<HomeProps> = (props) => {
         throw error;
       }
     }
+    const endTime = performance.now();
+    console.log(`saveIdea took ${endTime - startTime} ms`);
   };
 
   const toggleLikeIdea = async (idea: Idea): Promise<void> => {
+    const startTime = performance.now();
     try {
       if (session && idea.likes.includes(props.userId)) {
         await axios.delete(`/api/ideas/${idea._id}/likes/`);
@@ -82,6 +92,8 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
+    const endTime = performance.now();
+    console.log(`toggleLikeIdea took ${endTime - startTime} ms`);
   };
 
   const formatName = (appName: string, noun: string): string => {

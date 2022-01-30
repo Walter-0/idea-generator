@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+
 import { IdeaModel } from "../../../models/Idea";
 
 export default async function handler(
@@ -14,12 +15,11 @@ export default async function handler(
       try {
         const ideas = await IdeaModel.find().sort({ likesLength: -1 });
 
-        res.status(200).json(ideas);
+        return res.status(200).json(ideas);
       } catch (error) {
         console.error(error);
-        res.status(400).json({ success: false });
+        return res.status(400).json({ success: false });
       }
-      break;
 
     /** Save Idea to database */
     case "POST":
@@ -27,15 +27,14 @@ export default async function handler(
         try {
           const newIdea = await IdeaModel.create(req.body);
 
-          res.status(201).json({ success: true, data: newIdea });
+          return res.status(201).json({ success: true, data: newIdea });
         } catch (error) {
           console.error(error);
-          res.status(400).json({ success: false });
+          return res.status(400).json({ success: false });
         }
       } else {
-        res.status(401).end("You must be logged in to do that");
+        return res.status(401).end("You must be logged in to do that");
       }
-      break;
 
     default:
       res.setHeader("Allow", ["GET", "POST"]);

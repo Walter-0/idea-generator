@@ -37,15 +37,14 @@ export default async function handler(
           noun: getRandomNoun(),
         };
 
-        res.status(200).json(generatedIdea);
+        return res.status(200).json(generatedIdea);
       } catch (error) {
         console.error(error);
-        res.status(400).json({ success: false });
+        return res.status(400).json({ success: false });
       }
-      break;
 
     default:
       res.setHeader("Allow", ["GET"]);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+      return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

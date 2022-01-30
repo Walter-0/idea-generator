@@ -13,10 +13,10 @@ export default async function handler(
   const session = await getSession({ req });
   const { method, query } = req;
 
-  switch (method) {
-    /** Like Idea */
-    case "PATCH":
-      if (session) {
+  if (session) {
+    switch (method) {
+      /** Like Idea */
+      case "PATCH":
         const email = session.user!.email!;
         const hash = createHmac("sha256", secret).update(email).digest("hex");
 
@@ -29,19 +29,14 @@ export default async function handler(
             },
             { new: true }
           );
-          res.status(200).json({ success: true, data: likedIdea });
+          return res.status(200).json({ success: true, data: likedIdea });
         } catch (error) {
           console.error(error);
-          res.status(400).json({ success: false });
+          return res.status(400).json({ success: false });
         }
-      } else {
-        res.status(401).end("You must be logged in to do that");
-      }
-      break;
 
-    /** Unlike Idea */
-    case "DELETE":
-      if (session) {
+      /** Unlike Idea */
+      case "DELETE":
         try {
           const email = session.user!.email!;
           const hash = createHmac("sha256", secret).update(email).digest("hex");
@@ -55,18 +50,17 @@ export default async function handler(
             { new: true }
           );
 
-          res.status(200).json({ success: true, data: unlikedIdea });
+          return res.status(200).json({ success: true, data: unlikedIdea });
         } catch (error) {
           console.error(error);
-          res.status(400).json({ success: false });
+          return res.status(400).json({ success: false });
         }
-      } else {
-        res.status(401).end("You must be logged in to do that");
-      }
-      break;
 
-    default:
-      res.setHeader("Allow", ["PATCH", "DELETE"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      default:
+        res.setHeader("Allow", ["PATCH", "DELETE"]);
+        return res.status(405).end(`Method ${method} Not Allowed`);
+    }
+  } else {
+    return res.status(401).end("You must be logged in to do that");
   }
 }
