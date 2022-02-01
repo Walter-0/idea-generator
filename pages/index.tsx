@@ -6,6 +6,7 @@ import { Session } from "next-auth";
 import { createHmac } from "crypto";
 import axios, { AxiosResponse } from "axios";
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
@@ -14,12 +15,14 @@ import {
   List,
   ListItem,
   ListItemText,
+  Snackbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import CloseIcon from "@mui/icons-material/Close";
 import pluralize from "pluralize";
 import Layout from "../components/Layout";
 import { Idea, IdeaModel } from "../models/Idea";
@@ -41,6 +44,7 @@ const formatDate = (created: string): string => {
 
 const Home: NextPage<HomeProps> = (props) => {
   const { data: session } = useSession();
+  const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
   const [ideas, setIdeas] = useState<Idea[]>(props.ideas);
   const [generatedIdea, setGeneratedIdea] = useState<Idea>();
 
@@ -81,6 +85,7 @@ const Home: NextPage<HomeProps> = (props) => {
           noun: pluralize(generatedIdea.noun),
         });
         setIdeas((ideas) => [...ideas, data]);
+        setSnackBarIsOpen(true);
       } catch (error) {
         throw error;
       }
@@ -191,6 +196,16 @@ const Home: NextPage<HomeProps> = (props) => {
             )}
           </List>
         </Box>
+        <Snackbar
+          message="Successfully saved!"
+          autoHideDuration={5000}
+          open={snackBarIsOpen}
+          onClose={() => setSnackBarIsOpen(false)}
+        >
+          <Alert onClose={() => setSnackBarIsOpen(false)} severity="success">
+            Saved successfully!
+          </Alert>
+        </Snackbar>
       </Container>
     </Layout>
   );
