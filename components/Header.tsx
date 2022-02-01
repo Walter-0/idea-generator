@@ -1,8 +1,19 @@
 import { Button, Typography } from "@mui/material";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useState } from "react";
+import AboutDialog from "./AboutDialog";
 
 const Header = () => {
   const { data: session } = useSession();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="Header">
@@ -14,6 +25,8 @@ const Header = () => {
           <Button onClick={() => signOut()}>Logout</Button>
         </>
       )}
+      <Button onClick={handleDialogOpen}>About</Button>
+      <AboutDialog open={isDialogOpen} onClose={handleDialogClose} />
     </div>
   );
 };

@@ -156,6 +156,7 @@ const Home: NextPage<HomeProps> = (props) => {
               ideas.map((idea) => (
                 <ListItem
                   key={idea._id}
+                  divider
                   secondaryAction={
                     <>
                       <Typography variant="button">
