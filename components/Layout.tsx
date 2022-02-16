@@ -9,7 +9,6 @@ const Layout = (props: LayoutProps) => (
   <div className="Layout">
     <Header />
     <main className="Content">{props.children}</main>
-    <Footer />
   </div>
 );
 
