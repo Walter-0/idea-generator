@@ -22,7 +22,6 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import CloseIcon from "@mui/icons-material/Close";
 import pluralize from "pluralize";
 import Layout from "../components/Layout";
 import { Idea, IdeaModel } from "../models/Idea";
@@ -37,8 +36,8 @@ const formatName = (appName: string, noun: string): string => {
   return `${appName} for ${pluralize(noun)}`;
 };
 
-const formatDate = (created: string): string => {
-  const formattedDate = new Date(created);
+const formatDate = (createdAt: string): string => {
+  const formattedDate = new Date(createdAt);
   return formattedDate.toLocaleString();
 };
 
@@ -49,7 +48,6 @@ const Home: NextPage<HomeProps> = (props) => {
   const [generatedIdea, setGeneratedIdea] = useState<Idea>();
 
   const getIdeas = async (): Promise<void> => {
-    const startTime = performance.now();
     try {
       const { data }: AxiosResponse<Idea[]> = await axios.get<Idea[]>(
         "/api/ideas"
@@ -58,12 +56,9 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
-    const endTime = performance.now();
-    console.log(`getIdeas() took ${endTime - startTime} ms`);
   };
 
   const generateIdea = async (): Promise<void> => {
-    const startTime = performance.now();
     try {
       const { data }: AxiosResponse<Idea> = await axios.get<Idea>(
         "/api/ideas/new"
@@ -72,12 +67,9 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
-    const endTime = performance.now();
-    console.log(`generateIdea() took ${endTime - startTime} ms`);
   };
 
   const saveIdea = async (): Promise<void> => {
-    const startTime = performance.now();
     if (session && generatedIdea) {
       try {
         const { data }: AxiosResponse<Idea> = await axios.post("/api/ideas", {
@@ -90,12 +82,9 @@ const Home: NextPage<HomeProps> = (props) => {
         throw error;
       }
     }
-    const endTime = performance.now();
-    console.log(`saveIdea took ${endTime - startTime} ms`);
   };
 
   const toggleLikeIdea = async (idea: Idea): Promise<void> => {
-    const startTime = performance.now();
     try {
       if (session && idea.likes.includes(props.userId)) {
         await axios.delete(`/api/ideas/${idea._id}/likes/`);
@@ -106,8 +95,6 @@ const Home: NextPage<HomeProps> = (props) => {
     } catch (error) {
       throw error;
     }
-    const endTime = performance.now();
-    console.log(`toggleLikeIdea took ${endTime - startTime} ms`);
   };
 
   return (
