@@ -105,8 +105,13 @@ const Home: NextPage<HomeProps> = (props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Container maxWidth="sm">
-        <Button variant="contained" size="large" onClick={generateIdea}>
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={generateIdea}
+          sx={{ mr: 2 }}
+        >
           Generate Idea
         </Button>
 
@@ -130,7 +135,7 @@ const Home: NextPage<HomeProps> = (props) => {
         </Tooltip>
 
         {generatedIdea && (
-          <Typography variant="h3">
+          <Typography variant="h3" mt={4}>
             {formatName(generatedIdea.appName, generatedIdea.noun)}
           </Typography>
         )}

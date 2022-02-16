@@ -28,11 +28,26 @@ const AboutDialog = (props: AboutDialogProps) => {
         </IconButton>
       </DialogTitle>
       <Divider />
-      <Typography sx={{ p: 3 }}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus
-        veniam rem veritatis non, culpa quam accusantium, voluptatum consequatur
-        quibusdam voluptate odio similique tenetur quia sint ea facere aperiam
-        ad optio!
+      <Typography p={3}>
+        The Idea Generator can assist with brainstorming business ideas by
+        substituting the target audience of existing applications/businesses
+        with a random noun - e.g., Tinder for Dogs.
+        <br />
+        <br />
+        Presently, this site draws from a list of about 70 software applications
+        and 6800 common nouns. In the future, there will be options to generate
+        ideas on specific categories of apps and nouns.
+        <br />
+        <br />
+        Want to contribute? Feel free to contribute a pull request on{" "}
+        <a
+          href="https://github.com/Walter-0/idea-generator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Github
+        </a>
+        .
       </Typography>
     </Dialog>
   );
